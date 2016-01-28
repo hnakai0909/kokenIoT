@@ -19,11 +19,8 @@ int BME280_Init(void){
 int BME280_WriteRegister(uint8_t addr,uint8_t data){
 	I2C_Start();
 	I2C_Send(BME280_I2C_ADDR);
-	if (TW_STATUS != TW_MT_SLA_ACK) { return 1;	}
 	I2C_Send(addr);
-	if (TW_STATUS != TW_MT_SLA_ACK) { return 1;	}
 	I2C_Send(data);
-	if (TW_STATUS != TW_MT_SLA_ACK) { return 1;	}
 	I2C_Stop();
 	return 0;
 }
