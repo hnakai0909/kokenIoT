@@ -13,6 +13,7 @@
 
 #include "twi.h"
 #include "BME280.h"
+#include "SPLC792.h"
 #include "myutil.h"
 
 static inline void Init(void);

@@ -7,7 +7,7 @@
 
 #include "myutil.h"
 
-//マイナスは不可
+// 0 - 199 のみ対応
 char* itoa_03d(char* str,int num){
 	int tmp;
 	if(num >= 100){

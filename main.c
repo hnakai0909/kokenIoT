@@ -16,7 +16,7 @@ int main(void)
 {
 	int a;
 	char str[4];
-	_delay_ms(30); // no mean
+	_delay_ms(40); // Wait for VDD stable
 	Init();
     while (1) 
     {
@@ -34,7 +34,7 @@ int main(void)
 		pyro1 = bit_is_set(pinc, PINC0);
 		pyro2 = bit_is_set(pinc, PINC1);
 		door = bit_is_set(pinc, PINC3);
-		printf("%s",itoa_03d(str,pyro1));
+		SPLC792_puts(itoa_03d(str,pyro1));
 		
     }
 }
@@ -48,6 +48,7 @@ static inline void Init(void){
 	PWM_Init();
 	
 	BME280_Init();
+	SPLC792_Init();
 }
 
 static inline void GPIO_Init(void){
