@@ -1,0 +1,28 @@
+/*
+ * myutil.c
+ *
+ * Created: 2016/01/28 4:26:47
+ *  Author: HarukiNakai
+ */ 
+
+#include "myutil.h"
+
+//マイナスは不可
+char* itoa_03d(char* str,int num){
+	int tmp;
+	if(num >= 100){
+		num -= 100;
+		str[0] = '1';
+	} else {
+		str[0] = '0';	
+	};
+	tmp = '0';
+	while(num >= 10){
+		num -= 10;
+		tmp++;		
+	}
+	str[1] = tmp;
+	str[2] = '0' + num;
+	str[3] = '\0';
+	return str;
+}
