@@ -1,4 +1,4 @@
-/*
+ï»¿/*
  * config.h
  *
  * Created: 2016/01/24 17:54:30
@@ -8,7 +8,7 @@
 #ifndef CONFIG_H_
 #define CONFIG_H_
 
-/* FUSE‘‚«Š·‚¦–Y‚ê‚¸‚É */
+/* FUSEæ›¸ãæ›ãˆå¿˜ã‚Œãšã« */
 #define F_CPU 8000000
 #define UART_BAUD 9600
 #define MYUBRR (F_CPU / UART_BAUD / 16 - 1)

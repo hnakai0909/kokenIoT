@@ -1,4 +1,4 @@
-/*
+﻿/*
  * myutil.c
  *
  * Created: 2016/01/28 4:26:47
@@ -7,7 +7,7 @@
 
 #include "myutil.h"
 
-// 0 - 199 �̂ݑΉ�
+// 0 - 199 のみ対応
 char* itoa_03d(char* str,int num){
 	int tmp;
 	if(num >= 100){
