@@ -1,4 +1,4 @@
-/*
+ï»¿/*
  * kokenIoT.c
  *
  * Created: 2016/01/23 4:38:27
@@ -7,10 +7,11 @@
 
 #include "main.h"
 
-int pinc;
-int existence; // İº?(ŒuŒõ“”“_or–Å)
-int door; //ƒhƒAŠJ?
-int pyro1, pyro2; //ƒhƒA‘OÅ“dƒZƒ“ƒT”½‰?
+int pinc,pind;
+int existence; // åœ¨å®¤?(è›å…‰ç¯ ç‚¹oræ»…)
+int door; //ãƒ‰ã‚¢é–‹?
+int pyro1, pyro2; //ãƒ‰ã‚¢å‰ç„¦é›»ã‚»ãƒ³ã‚µåå¿œ?
+int button; // 0ç„¡æŠ¼ä¸‹,1é¸æŠ,2æ±ºå®š,3å–æ¶ˆ (åŒæ™‚æŠ¼ã—ã¯çŸ¥ã‚‰ãªã„)
 
 int main(void)
 {
@@ -21,20 +22,31 @@ int main(void)
     while (1) 
     {
 		
-		ADCSRA |= _BV(ADSC);       //•ÏŠ·ŠJn
-		loop_until_bit_is_set(ADCSRA,ADIF);  //•ÏŠ·I—¹ADIF‚ªƒZƒbƒg‚³‚ê‚é
-		a = ( ADC >> 4 );       //AD•ÏŠ·Œ‹‰Ê 4bit¼ÌÄ= 6bit:0-64
-		if(a<32){
+		ADCSRA |= _BV(ADSC);       //å¤‰æ›é–‹å§‹
+		loop_until_bit_is_set(ADCSRA,ADIF);  //å¤‰æ›çµ‚äº†æ™‚ADIFãŒã‚»ãƒƒãƒˆã•ã‚Œã‚‹
+		a = ( ADC >> 4 );       //ADå¤‰æ›çµæœ 4bitï½¼ï¾Œï¾„= 6bit:0-64
+		if(a < 32){
 			existence = TRUE;
 		} else {
 			existence = FALSE;
 		}
 		
 		pinc = PINC;
+		pind = PIND;
 		pyro1 = bit_is_set(pinc, PINC0);
 		pyro2 = bit_is_set(pinc, PINC1);
 		door = bit_is_set(pinc, PINC3);
+		if(bit_is_set(pind, PIND2)){
+			button = 1;
+		} else if (bit_is_set(pind, PIND3)){
+			button = 2;
+		} else if (bit_is_set(pind, PIND4)){
+			button = 3;
+		} else {
+			button = 0;
+		}
 		SPLC792_puts(itoa_03d(str,pyro1));
+		_delay_ms(100);
 		
 		for(i=0;i<5;i++){
 			_delay_ms(100);
@@ -62,7 +74,7 @@ static inline void GPIO_Init(void){
 	DDRC = 0b11110000;
 	PORTC = 0b00000000;
 	
-	DDRD = 0b11111111;
+	DDRD = 0b11100010;
 	PORTD = 0b00000000;
 }
 
@@ -80,8 +92,8 @@ static inline void UART_Init(void){
 
 
 static inline void ADC_Init(void){
-	ADCSRA = 0b10000100; // AD‹–‰Â:1 ADŠJn:0 AD©“®‹N“®:0 ADŠ„:0 ADŠ®—¹Š„:0 ck/16
-	ADMUX = 0b01000010; //AREF=VCC (AREFƒsƒ“‚É‚ÍƒRƒ“ƒfƒ“ƒT‚ğ‚Â‚¯‚È‚¯‚ê‚Î‚È‚ç‚È‚¢), “ü—Í:ADC2(PC2)	
+	ADCSRA = 0b10000100; // ADè¨±å¯:1 ADé–‹å§‹:0 ADè‡ªå‹•èµ·å‹•:0 ADå‰²è¾¼:0 ADå®Œäº†å‰²è¾¼:0 ck/16
+	ADMUX = 0b01000010; //AREF=VCC (AREFãƒ”ãƒ³ã«ã¯ã‚³ãƒ³ãƒ‡ãƒ³ã‚µã‚’ã¤ã‘ãªã‘ã‚Œã°ãªã‚‰ãªã„), å…¥åŠ›:ADC2(PC2)	
 }
 
 static inline void Timer_Init(void){

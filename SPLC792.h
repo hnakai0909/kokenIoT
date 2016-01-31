@@ -1,4 +1,4 @@
-/*
+﻿/*
  * SPLC792.h (I2C LCD module)
  *
  * Created: 2016/01/29 3:36:45
