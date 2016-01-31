@@ -22,9 +22,17 @@
 #include <util/twi.h>
 #include "twi.h"
 
+extern uint32_t pres_raw,temp_raw;
+extern uint16_t hum_raw;
+
 int BME280_Init(void);
 int BME280_WriteRegister(uint8_t addr,uint8_t data);
 
+void BME280_ReadData(void);
 
+
+int32_t calibration_T(int32_t adc_T);
+uint32_t calibration_P(int32_t adc_P);
+uint32_t calibration_H(int32_t adc_H);
 
 #endif /* BME280_H_ */
