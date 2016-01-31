@@ -54,3 +54,14 @@ void SPLC792_puts(const char *s){
 		SPLC792_Data(*s++);
 	}
 }
+
+void SPLC792_puts_8(char c0,char c1,char c2,char c3,char c4,char c5,char c6,char c7){
+	SPLC792_Data(c0);
+	SPLC792_Data(c1);
+	SPLC792_Data(c2);
+	SPLC792_Data(c3);
+	SPLC792_Data(c4);
+	SPLC792_Data(c5);
+	SPLC792_Data(c6);
+	SPLC792_Data(c7);
+}
