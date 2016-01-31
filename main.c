@@ -8,13 +8,13 @@
 #include "main.h"
 
 int pinc;
-int existence; //在室?(蛍光灯点or滅)
+int existence; // 在室?(蛍光灯点or滅)
 int door; //ドア開?
 int pyro1, pyro2; //ドア前焦電センサ反応?
 
 int main(void)
 {
-	int a;
+	int a,i;
 	char str[4];
 	_delay_ms(40); // Wait for VDD stable
 	Init();
@@ -36,6 +36,9 @@ int main(void)
 		door = bit_is_set(pinc, PINC3);
 		SPLC792_puts(itoa_03d(str,pyro1));
 		
+		for(i=0;i<5;i++){
+			_delay_ms(100);
+		}
     }
 }
 
