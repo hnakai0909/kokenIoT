@@ -24,19 +24,13 @@ void I2C_Stop(void){
 }
 
 void I2C_Send(uint8_t data){
-	/*
-	if(TW_STATUS != TW_START)return 1;
-	*/
 	TWDR = data;
 	TWCR = _BV(TWINT) | _BV(TWEN);
 	loop_until_bit_is_set(TWCR, TWINT);
 }
 
-uint8_t I2C_Recv(int ack){
-	/*
-	if (TW_STATUS != TW_MT_DATA_ACK)ERROR();
-	*/
-	TWCR = _BV(TWINT) | _BV(TWSTO) | _BV(TWEN);
-	loop_until_bit_is_set(TWCR, TWSTO);
+uint8_t I2C_Recv(void){
+	TWCR = _BV(TWINT) | _BV(TWEN) | _BV(TWEA) ;
+	loop_until_bit_is_set(TWCR, TWINT);
 	return TWDR;
 }

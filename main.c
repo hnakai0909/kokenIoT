@@ -7,15 +7,21 @@
 
 #include "main.h"
 
-int pinc,pind;
-int existence; // 在室?(蛍光灯 点or滅)
-int door; //ドア開?
-int pyro1, pyro2; //ドア前焦電センサ反応?
-int button; // 0無押下,1選択,2決定,3取消 (同時押しは知らない)
+unsigned char pinc,pind;
+unsigned char existence; // 在室?(蛍光灯 点or滅)
+unsigned char door; //ドア開?
+unsigned char pyro1, pyro2; //ドア前焦電センサ反応?
+unsigned char button; // 0無押下,1選択,2決定,3取消 (同時押しは知らない)
+uint32_t pres_raw,temp_raw;
+uint16_t hum_raw;
+
+double temp_act = 0.0, press_act = 0.0,hum_act=0.0;
+signed long int temp_cal;
+unsigned long int press_cal,hum_cal;
 
 int main(void)
 {
-	int a,i;
+	uint8_t a;
 	char str[4];
 	_delay_ms(40); // Wait for VDD stable
 	Init();
@@ -23,7 +29,7 @@ int main(void)
     {
 		
 		ADCSRA |= _BV(ADSC);       //変換開始
-		loop_until_bit_is_set(ADCSRA,ADIF);  //変換終了時ADIFがセットされる
+		loop_until_bit_is_set(ADCSRA, ADIF);  //変換終了時ADIFがセットされる
 		a = ( ADC >> 4 );       //AD変換結果 4bitｼﾌﾄ= 6bit:0-64
 		if(a < 32){
 			existence = TRUE;
@@ -45,12 +51,21 @@ int main(void)
 		} else {
 			button = 0;
 		}
-		SPLC792_puts(itoa_03d(str,pyro1));
+		SPLC792_puts_8('P', '0'+pyro1, '0'+pyro2, 'D', '0'+door, 'E', '0'+existence, ' ');
+		
+		
+		
+		BME280_ReadData();
+		temp_cal = calibration_T(temp_raw);
+		press_cal = calibration_P(pres_raw);
+		hum_cal = calibration_H(hum_raw);
+		temp_act = (double)temp_cal / 100.0;
+		press_act = (double)press_cal / 100.0;
+		hum_act = (double)hum_cal / 1024.0;
+		
+		
 		_delay_ms(100);
 		
-		for(i=0;i<5;i++){
-			_delay_ms(100);
-		}
     }
 }
 
@@ -88,8 +103,6 @@ static inline void UART_Init(void){
 	UCSR0B = _BV(RXEN0) | _BV(TXEN0) | (0 << UCSZ02);
 	UCSR0C = _BV(UCSZ01) | _BV(UCSZ00);
 }
-
-
 
 static inline void ADC_Init(void){
 	ADCSRA = 0b10000100; // AD許可:1 AD開始:0 AD自動起動:0 AD割込:0 AD完了割込:0 ck/16
