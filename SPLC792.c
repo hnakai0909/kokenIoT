@@ -9,9 +9,9 @@
 
 
 void SPLC792_Init(void){
-	//reset low
+	PORTD &= ~_BV(PORTD7); //reset low
 	_delay_ms(1);
-	//reset high
+	PORTD |= _BV(PORTD7);//reset high
 	_delay_ms(50);
 	SPLC792_Cmd(0x38); // function set
 	SPLC792_Cmd(0x39); // extension function set
@@ -29,20 +29,20 @@ void SPLC792_Init(void){
 
 void SPLC792_Cmd(uint8_t cmd){
 	I2C_Start();
-	I2C_Send(BME280_I2C_ADDR);
+	I2C_Send(BME280_I2C_ADDR << 1);
 	I2C_Send(0x00);
 	I2C_Send(cmd);
 	I2C_Stop();
-	//_delay_us(27); // > 25us(400KHz*10?) + 1.3us
+	_delay_us(27); // > 25us(400KHz*10?) + 1.3us
 }
 
 void SPLC792_Data(uint8_t data){
 	I2C_Start();
-	I2C_Send(BME280_I2C_ADDR);
+	I2C_Send(BME280_I2C_ADDR << 1);
 	I2C_Send(0x40);
 	I2C_Send(data);
 	I2C_Stop();
-	//_delay_us(27); // > 25us(400KHz*10?) + 1.3us
+	_delay_us(27); // > 25us(400KHz*10?) + 1.3us
 }
 
 void SPLC792_Move(uint8_t pos){
@@ -56,6 +56,7 @@ void SPLC792_puts(const char *s){
 }
 
 void SPLC792_puts_8(char c0,char c1,char c2,char c3,char c4,char c5,char c6,char c7){
+	SPLC792_Cmd(0x03);
 	SPLC792_Data(c0);
 	SPLC792_Data(c1);
 	SPLC792_Data(c2);

@@ -26,7 +26,9 @@ extern uint32_t pres_raw,temp_raw;
 extern uint16_t hum_raw;
 
 int BME280_Init(void);
-int BME280_WriteRegister(uint8_t addr,uint8_t data);
+
+void BME280_WriteRegister(uint8_t regaddr,uint8_t data);
+void BME280_ReadRegister(uint8_t regaddr,uint8_t* data,uint8_t num);
 
 void BME280_ReadData(void);
 

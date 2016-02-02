@@ -51,74 +51,61 @@ int BME280_Init(void){
 	return 0;
 }
 
-int BME280_WriteRegister(uint8_t addr,uint8_t data){
+void BME280_WriteRegister(uint8_t regaddr, uint8_t data){
 	I2C_Start();
-	I2C_Send(BME280_I2C_ADDR);
-	I2C_Send(addr);
+	I2C_Send(BME280_I2C_ADDR<<1);
+	I2C_Send(regaddr);
 	I2C_Send(data);
 	I2C_Stop();
-	return 0;
+}
+
+void BME280_ReadRegister(uint8_t regaddr, uint8_t* data, uint8_t num){
+	I2C_Start();
+	I2C_Send(BME280_I2C_ADDR<<1);
+	I2C_Send(regaddr);
+	I2C_Stop();
+	I2C_Recv_Num(BME280_I2C_ADDR, data, num);
 }
 
 void BME280_ReadData(void){
-	int i = 0;
-	uint32_t data[8];
-	I2C_Start();
-	I2C_Send(BME280_I2C_ADDR<<1); //Write
-	I2C_Send(0xF7);
-	I2C_Stop();
-	I2C_Start();
-	I2C_Send(BME280_I2C_ADDR<<1 | 1); //Read
-	
-	I2C_Send(0xF7);
-	for(i=0;i<8;i++){
-		data[i] = I2C_Recv();
-	}
+	uint8_t data[18];
+	UDR0 = '!';_delay_ms(1);
+	BME280_ReadRegister(0xF7, data, 8); // read raw pres,temp,hum
 	pres_raw = (data[0] << 12) | (data[1] << 4) | (data[2] >> 4);
 	temp_raw = (data[3] << 12) | (data[4] << 4) | (data[5] >> 4);
 	hum_raw  = (data[6] << 8) | data[7];
 	
-	I2C_Send(0x88); // read dig_T regs
-	for(i=0;i<6;i++){
-		data[i] = I2C_Recv();
-	}
+	UDR0 = '\"';_delay_ms(1);
+	BME280_ReadRegister(0x88, data, 6); // read dig_T regs
 	dig_T1 = (data[1] << 8) | data[0];
 	dig_T2 = (data[3] << 8) | data[2];
 	dig_T3 = (data[5] << 8) | data[4];
-	
-	I2C_Send(0x8E); // read dig_P regs
-	for(i=0;i<8;i++){
-		data[i] = I2C_Recv();
-	}
+
+	UDR0 = '#';_delay_ms(1);
+	BME280_ReadRegister(0x8E, data, 18); // read dig_P regs
 	dig_P1 = (data[ 1] << 8) | data[ 0];
 	dig_P2 = (data[ 3] << 8) | data[ 2];
 	dig_P3 = (data[ 5] << 8) | data[ 4];
 	dig_P4 = (data[ 7] << 8) | data[ 6];
-	for(i=0;i<8;i++){
-		data[i] = I2C_Recv();
-	}
-	dig_P5 = (data[ 1] << 8) | data[ 0];
-	dig_P6 = (data[ 3] << 8) | data[ 2];
-	dig_P7 = (data[ 5] << 8) | data[ 4];
-	dig_P8 = (data[ 7] << 8) | data[ 6];
-	for(i=0;i<2;i++){
-		data[i] = I2C_Recv();
-	}
-	dig_P9 = (data[1] << 8) | data[0];
-	 
+	dig_P5 = (data[ 9] << 8) | data[ 8];
+	dig_P6 = (data[11] << 8) | data[10];
+	dig_P7 = (data[13] << 8) | data[12];
+	dig_P8 = (data[15] << 8) | data[14];
+	dig_P9 = (data[17] << 8) | data[16];
 	
-	I2C_Send(0xA1); // read dig_H regs
-	data[0] = I2C_Recv();
-	I2C_Send(0xE1); // read dig_H regs
-	for(i=1;i<8;i++){
-		data[i] = I2C_Recv();
-	}
+	UDR0 = '$';_delay_ms(1);
+	BME280_ReadRegister(0xA1, data, 1); // read dig_H1 regs
 	dig_H1 = data[0];
-	dig_H2 = (data[2] << 8) | data[1];
-	dig_H3 = data[3];
-	dig_H4 = (data[4] << 4) | (data[5] & 0x0f);
-	dig_H5 = (data[6] << 4) | ((data[5]>>4) & 0x0f);
-	dig_H6 = data[7];
+	
+	UDR0 = '%';_delay_ms(1);
+	BME280_ReadRegister(0xE1, data, 7); // read dig_H2-6 regs
+	dig_H2 = (data[1] << 8) | data[0];
+	dig_H3 = data[2];
+	dig_H4 = (data[3] << 4) | (data[4] & 0x0f);
+	dig_H5 = (data[5] << 4) | ((data[4]>>4) & 0x0f);
+	dig_H6 = data[6];
+
+	UDR0 = '&';_delay_ms(1);
 	
 }
 

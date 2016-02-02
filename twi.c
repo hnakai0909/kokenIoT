@@ -9,8 +9,9 @@
 
 void I2C_Init(void){
 	// 400kHz @ 8MHz
-	TWSR = 0;
+	TWSR = 0; //no prescale
 	TWBR = 2;
+	TWCR = _BV(TWEN);
 }
 
 void I2C_Start(void){
@@ -29,8 +30,29 @@ void I2C_Send(uint8_t data){
 	loop_until_bit_is_set(TWCR, TWINT);
 }
 
-uint8_t I2C_Recv(void){
-	TWCR = _BV(TWINT) | _BV(TWEN) | _BV(TWEA) ;
+uint8_t I2C_Recv(int ack){
+	if(ack==I2C_ACK){
+		//ACK
+		TWCR = _BV(TWINT) | _BV(TWEN) | _BV(TWEA);
+	}else{
+		//NOACK(NACK)
+		TWCR = _BV(TWINT) | _BV(TWEN);
+	}
 	loop_until_bit_is_set(TWCR, TWINT);
 	return TWDR;
+}
+
+void I2C_Recv_Num(uint8_t i2caddr, uint8_t* data, uint8_t num){
+	unsigned char i;
+	I2C_Start();
+	I2C_Send((i2caddr << 1) | 1); //Read
+	for(i = 0 ; i < (num - 1) ; i++){
+		data[i] = I2C_Recv(I2C_ACK);
+	}
+	data[i] = I2C_Recv(I2C_NOACK);
+	UDR0 = '0'+(TWSR>>4);_delay_ms(1);
+	UDR0 = '0'+(TWSR&0x0F);_delay_ms(1);
+	I2C_Stop();
+	UDR0 = '0'+(TWSR>>4);_delay_ms(1);
+	UDR0 = '0'+(TWSR&0x0F);_delay_ms(1);
 }

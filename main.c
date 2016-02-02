@@ -22,9 +22,10 @@ unsigned long int press_cal,hum_cal;
 int main(void)
 {
 	uint8_t a;
-	char str[4];
+	//char str[4];
 	_delay_ms(40); // Wait for VDD stable
 	Init();
+	_delay_ms(120);
     while (1) 
     {
 		
@@ -42,19 +43,20 @@ int main(void)
 		pyro1 = bit_is_set(pinc, PINC0);
 		pyro2 = bit_is_set(pinc, PINC1);
 		door = bit_is_set(pinc, PINC3);
-		if(bit_is_set(pind, PIND2)){
+		if(bit_is_clear(pind, PIND2)){
 			button = 1;
-		} else if (bit_is_set(pind, PIND3)){
+		} else if (bit_is_clear(pind, PIND3)){
 			button = 2;
-		} else if (bit_is_set(pind, PIND4)){
+		} else if (bit_is_clear(pind, PIND4)){
 			button = 3;
 		} else {
 			button = 0;
 		}
-		SPLC792_puts_8('P', '0'+pyro1, '0'+pyro2, 'D', '0'+door, 'E', '0'+existence, ' ');
+		UDR0 = '0' + button; 
+		//SPLC792_puts_8('P', '0'+pyro1, '0'+pyro2, 'D', '0'+door, 'E', '0'+existence, ' ');
+		//SPLC792_puts_8('A','B','C','D','A','B','C','D');
 		
-		
-		
+		_delay_ms(1000);
 		BME280_ReadData();
 		temp_cal = calibration_T(temp_raw);
 		press_cal = calibration_P(pres_raw);
@@ -62,8 +64,10 @@ int main(void)
 		temp_act = (double)temp_cal / 100.0;
 		press_act = (double)press_cal / 100.0;
 		hum_act = (double)hum_cal / 1024.0;
-		
-		
+		UDR0='0'+((temp_cal>>24)&0x0F);_delay_us(120);
+		UDR0='0'+((temp_cal>>16)&0x0F);_delay_us(120);
+		UDR0='0'+((temp_cal>> 8)&0x0F);_delay_us(120);
+		UDR0='0'+((temp_cal&0x0F));_delay_us(120);
 		_delay_ms(100);
 		
     }
