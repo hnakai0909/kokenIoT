@@ -52,11 +52,11 @@ int main(void)
 		} else {
 			button = 0;
 		}
-		UDR0 = '0' + button; 
+		UDR0 = '\r';_delay_ms(1);UDR0 = '\n';_delay_ms(1);
+		UDR0 = '0' + button;_delay_ms(1);
 		//SPLC792_puts_8('P', '0'+pyro1, '0'+pyro2, 'D', '0'+door, 'E', '0'+existence, ' ');
 		//SPLC792_puts_8('A','B','C','D','A','B','C','D');
 		
-		_delay_ms(1000);
 		BME280_ReadData();
 		temp_cal = calibration_T(temp_raw);
 		press_cal = calibration_P(pres_raw);
