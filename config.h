@@ -16,6 +16,6 @@
 #define BME280_I2C_ADDR 0x76
 #define SPLC792_I2C_ADDR 0x3e
 
-#define SPLC792_CONTRAST 7
+#define SPLC792_CONTRAST 30
 
 #endif /* CONFIG_H_ */

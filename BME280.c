@@ -61,6 +61,7 @@ void BME280_WriteRegister(uint8_t regaddr, uint8_t data){
 
 void BME280_ReadRegister(uint8_t regaddr, uint8_t* data, uint8_t num){
 	I2C_Start();
+	//UDR0 = itoa_01x(TW_STATUS>>4); _delay_ms(1); UDR0 = itoa_01x(TW_STATUS&0x0f); _delay_ms(1);
 	I2C_Send(BME280_I2C_ADDR<<1);
 	I2C_Send(regaddr);
 	I2C_Stop();
@@ -82,7 +83,8 @@ void BME280_ReadData(void){
 	dig_T3 = (data[5] << 8) | data[4];
 
 	UDR0 = '#';_delay_ms(1);
-	BME280_ReadRegister(0x8E, data, 18); // read dig_P regs
+	//BME280_ReadRegister(0x8E, data, 18); // read dig_P regs
+	
 	dig_P1 = (data[ 1] << 8) | data[ 0];
 	dig_P2 = (data[ 3] << 8) | data[ 2];
 	dig_P3 = (data[ 5] << 8) | data[ 4];
@@ -92,7 +94,7 @@ void BME280_ReadData(void){
 	dig_P7 = (data[13] << 8) | data[12];
 	dig_P8 = (data[15] << 8) | data[14];
 	dig_P9 = (data[17] << 8) | data[16];
-	
+
 	UDR0 = '$';_delay_ms(1);
 	BME280_ReadRegister(0xA1, data, 1); // read dig_H1 regs
 	dig_H1 = data[0];
