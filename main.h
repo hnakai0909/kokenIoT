@@ -10,8 +10,10 @@
 #include <avr/interrupt.h>
 #include <avr/sfr_defs.h>
 #include <util/delay.h>
+#include <stdio.h>
 
 #include "twi.h"
+#include "UART.h"
 #include "BME280.h"
 #include "SPLC792.h"
 #include "myutil.h"
