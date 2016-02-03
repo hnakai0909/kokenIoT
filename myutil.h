@@ -10,7 +10,7 @@
 #define MYUTIL_H_
 
 char* itoa_03d(char* str,int num);
-
+char itoa_01x(unsigned int num);
 
 
 #endif /* MYUTIL_H_ */

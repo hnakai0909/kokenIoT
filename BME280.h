@@ -21,6 +21,7 @@
 #include <util/delay.h>
 #include <util/twi.h>
 #include "twi.h"
+#include "myutil.h"
 
 extern uint32_t pres_raw,temp_raw;
 extern uint16_t hum_raw;

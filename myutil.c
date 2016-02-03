@@ -26,3 +26,8 @@ char* itoa_03d(char* str,int num){
 	str[3] = '\0';
 	return str;
 }
+
+// 0-15 -> '0'-'9','A'-'F'
+char itoa_01x(unsigned int num){
+	return (num >= 10) ? ('A' + num - 10) : ('0' + num);
+}
