@@ -13,19 +13,33 @@ unsigned char door; //ドア開?
 unsigned char pyro1, pyro2; //ドア前焦電センサ反応?
 unsigned char button; // 0無押下,1選択,2決定,3取消 (同時押しは知らない)
 uint32_t pres_raw,temp_raw;
-uint16_t hum_raw;
+uint32_t hum_raw;
 
 double temp_act = 0.0, press_act = 0.0,hum_act=0.0;
 int32_t temp_cal;
 uint32_t press_cal,hum_cal;
 
+// door,pyro
+ISR(PCINT1_vect){
+		
+}
+
+//button
+ISR(PCINT2_vect){
+	
+}
+
+ISR(TIMER2_COMPA_vect){
+	
+}
+
 int main(void)
 {
 	uint8_t a;
-	char str[32];
+	char str[64];
 	_delay_ms(40); // Wait for VDD stable
 	Init();
-	_delay_ms(120);
+	//_delay_ms(120);
     while (1) 
     {
 		
@@ -56,18 +70,25 @@ int main(void)
 		UDR0 = '0' + button;_delay_ms(1);
 		//SPLC792_puts_8('P', '0'+pyro1, '0'+pyro2, 'D', '0'+door, 'E', '0'+existence, ' ');
 		//SPLC792_puts_8('A','B','C','D','A','B','C','D');
+		sprintf(str,"Pyro:%d,%d Door:%d Btn:%d Exi:%d(raw:%d)\n",pyro1,pyro2,door,button,existence,a);
+		UART_puts(str);
+		_delay_ms(35);
 		
 		BME280_ReadData();
-		sprintf(str,"t%lu  p%lu h%d ",temp_raw,pres_raw,hum_raw);
-		SPLC792_puts(str);
-		/*
+		sprintf(str,"Raw: t=%lu p=%lu h=%lu ",temp_raw,pres_raw,hum_raw);
+		UART_puts(str);
+		SPLC792_Cmd(0x03);SPLC792_puts(str);
+		_delay_ms(35);
 		temp_cal = calibration_T(temp_raw);
 		press_cal = calibration_P(pres_raw);
 		hum_cal = calibration_H(hum_raw);
 		temp_act = (double)temp_cal / 100.0;
 		press_act = (double)press_cal / 100.0;
 		hum_act = (double)hum_cal / 1024.0;
-		*/
+		
+		sprintf(str,"Act: t=%.2f p=%.2f h=%.2f ",temp_act,press_act,hum_act);
+		UART_puts(str);
+		
 		_delay_ms(100);
 		
     }
@@ -80,9 +101,12 @@ static inline void Init(void){
 	ADC_Init();
 	Timer_Init();
 	PWM_Init();
+	//PCINT_Init();
 	
 	BME280_Init();
 	SPLC792_Init();
+	
+	//sei();
 }
 
 static inline void GPIO_Init(void){
@@ -119,4 +143,10 @@ static inline void Timer_Init(void){
 
 static inline void PWM_Init(void){
 	
+}
+
+static inline void PCINT_Init(void){
+	PCICR = _BV(PCIE2) | _BV(PCIE1);
+	PCMSK2 = _BV(PCINT20) | _BV(PCINT19) | _BV(PCINT18);
+	PCMSK1 = _BV(PCINT11) | _BV(PCINT9) | _BV(PCINT8);
 }
