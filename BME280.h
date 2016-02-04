@@ -20,11 +20,11 @@
 #include <avr/sfr_defs.h>
 #include <util/delay.h>
 #include <util/twi.h>
+#include <math.h>
 #include "twi.h"
 #include "myutil.h"
 
-extern uint32_t pres_raw,temp_raw;
-extern uint16_t hum_raw;
+extern uint32_t pres_raw,temp_raw,hum_raw;
 
 int BME280_Init(void);
 
@@ -34,8 +34,8 @@ void BME280_ReadRegister(uint8_t regaddr,uint8_t* data,uint8_t num);
 void BME280_ReadData(void);
 
 
-int32_t calibration_T(int32_t adc_T);
-uint32_t calibration_P(int32_t adc_P);
-uint32_t calibration_H(int32_t adc_H);
+int32_t calibration_T(uint32_t adc_T);
+uint32_t calibration_P(uint32_t adc_P);
+uint32_t calibration_H(uint32_t adc_H);
 
 #endif /* BME280_H_ */

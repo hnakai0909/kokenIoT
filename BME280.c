@@ -69,49 +69,51 @@ void BME280_ReadRegister(uint8_t regaddr, uint8_t* data, uint8_t num){
 }
 
 void BME280_ReadData(void){
-	uint8_t data[18];
-	UDR0 = '!';_delay_ms(1);
+	uint8_t data[8],i;
 	BME280_ReadRegister(0xF7, data, 8); // read raw pres,temp,hum
 	pres_raw = (data[0] << 12) | (data[1] << 4) | (data[2] >> 4);
 	temp_raw = (data[3] << 12) | (data[4] << 4) | (data[5] >> 4);
 	hum_raw  = (data[6] << 8) | data[7];
+	for(i=0;i<8;i++){UDR0 = data[i];_delay_ms(2);}
 	
-	UDR0 = '\"';_delay_ms(1);
 	BME280_ReadRegister(0x88, data, 6); // read dig_T regs
 	dig_T1 = (data[1] << 8) | data[0];
 	dig_T2 = (data[3] << 8) | data[2];
 	dig_T3 = (data[5] << 8) | data[4];
+	for(i=0;i<6;i++){UDR0 = data[i];_delay_ms(2);}
 
-	UDR0 = '#';_delay_ms(1);
-	//BME280_ReadRegister(0x8E, data, 18); // read dig_P regs
-	
+	BME280_ReadRegister(0x8E, data, 8); // read dig_P regs1	
 	dig_P1 = (data[ 1] << 8) | data[ 0];
 	dig_P2 = (data[ 3] << 8) | data[ 2];
 	dig_P3 = (data[ 5] << 8) | data[ 4];
 	dig_P4 = (data[ 7] << 8) | data[ 6];
-	dig_P5 = (data[ 9] << 8) | data[ 8];
-	dig_P6 = (data[11] << 8) | data[10];
-	dig_P7 = (data[13] << 8) | data[12];
-	dig_P8 = (data[15] << 8) | data[14];
-	dig_P9 = (data[17] << 8) | data[16];
+	for(i=0;i<8;i++){UDR0 = data[i];_delay_ms(2);}
+	
+	BME280_ReadRegister(0x96, data, 8); // read dig_P regs2
+	dig_P5 = (data[ 1] << 8) | data[ 0];
+	dig_P6 = (data[ 3] << 8) | data[ 2];
+	dig_P7 = (data[ 5] << 8) | data[ 4];
+	dig_P8 = (data[ 7] << 8) | data[ 6];
+	for(i=0;i<8;i++){UDR0 = data[i];_delay_ms(2);}
+	
+	BME280_ReadRegister(0x9E, data, 2); // read dig_P regs3
+	dig_P9 = (data[ 1] << 8) | data[ 0];
+	for(i=0;i<2;i++){UDR0 = data[i];_delay_ms(2);}
 
-	UDR0 = '$';_delay_ms(1);
 	BME280_ReadRegister(0xA1, data, 1); // read dig_H1 regs
 	dig_H1 = data[0];
+	for(i=0;i<1;i++){UDR0 = data[i];_delay_ms(2);}
 	
-	UDR0 = '%';_delay_ms(1);
 	BME280_ReadRegister(0xE1, data, 7); // read dig_H2-6 regs
 	dig_H2 = (data[1] << 8) | data[0];
 	dig_H3 = data[2];
 	dig_H4 = (data[3] << 4) | (data[4] & 0x0f);
 	dig_H5 = (data[5] << 4) | ((data[4]>>4) & 0x0f);
 	dig_H6 = data[6];
-
-	UDR0 = '&';_delay_ms(1);
-	
+	for(i=0;i<7;i++){UDR0 = data[i];_delay_ms(2);}
 }
 
-int32_t calibration_T(int32_t adc_T)
+int32_t calibration_T(uint32_t adc_T)
 {
 	
 	int32_t var1, var2, T;
@@ -123,7 +125,7 @@ int32_t calibration_T(int32_t adc_T)
 	return T;
 }
 
-uint32_t calibration_P(int32_t adc_P)
+uint32_t calibration_P(uint32_t adc_P)
 {
 	int32_t var1, var2;
 	uint32_t P;
@@ -152,7 +154,7 @@ uint32_t calibration_P(int32_t adc_P)
 	return P;
 }
 
-uint32_t calibration_H(int32_t adc_H)
+uint32_t calibration_H(uint32_t adc_H)
 {
 	int32_t v_x1;
 	
