@@ -17,6 +17,9 @@
 #include <avr/sfr_defs.h>
 #include <util/delay.h>
 
+extern char UART_buf[64];
+extern uint8_t UART_buf_ptr;
+
 void UART_puts(char* str);
 
 #endif /* UART_H_ */

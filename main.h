@@ -27,6 +27,9 @@ static inline void ADC_Init(void);
 static inline void Timer_Init(void);
 static inline void PWM_Init(void);
 static inline void PCINT_Init(void);
+
+void Beep_Play(uint8_t freq);
+
 /*
 (PCINT14/RESET)			PC6	01	28	PC5 (ADC5/SCL/PCINT13)
 (PCINT16/RXD)			PD0	02	27	PC4 (ADC4/SDA/PCINT12)
