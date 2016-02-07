@@ -67,12 +67,3 @@ void SPLC792_puts_8(char c0,char c1,char c2,char c3,char c4,char c5,char c6,char
 	SPLC792_Data(c7);
 }
 
-void SplashScreen(void){
-	SPLC792_Cmd(0x03);
-	SPLC792_puts("koken IoT System");
-	SPLC792_Cmd(0xC0);
-	SPLC792_puts("version 0.1alpha");
-	_delay_ms(1000);
-	SPLC792_Cmd(0x01); // clear display (take 2ms)
-	_delay_ms(2);
-}

@@ -29,6 +29,9 @@ static inline void PWM_Init(void);
 static inline void PCINT_Init(void);
 
 void Beep_Play(uint8_t freq);
+void Beep_Stop(void);
+
+void SplashScreen(void);
 
 /*
 (PCINT14/RESET)			PC6	01	28	PC5 (ADC5/SCL/PCINT13)

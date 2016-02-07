@@ -21,8 +21,9 @@ uint32_t press_cal,hum_cal;
 
 uint8_t bflag = 0;
 
-char UART_buf[64];
-uint8_t UART_buf_ptr = 0;
+char UART_TXbuf[UART_TXBUF_SIZE];
+uint8_t UART_TXbuf_head = 0;
+uint8_t UART_TXbuf_tail = 0;
 
 // door,pyro
 ISR(PCINT1_vect){
@@ -71,14 +72,6 @@ ISR(TIMER1_COMPA_vect){
 	bflag=0;
 }
 
-ISR(USART_RX_vect){
-	
-}
-	
-ISR(USART_UDRE_vect){
-	UDR0 = UART_buf[UART_buf_ptr++];
-}
-
 int main(void)
 {
 	uint8_t a;
@@ -98,7 +91,7 @@ int main(void)
 			existence = FALSE;
 		}
 	
-		UDR0 = '\r';_delay_ms(1);UDR0 = '\n';_delay_ms(1);
+		UART_putchar('\r');UART_putchar('\n');
 		//SPLC792_puts_8('P', '0'+pyro1, '0'+pyro2, 'D', '0'+door, 'E', '0'+existence, ' ');
 		//SPLC792_puts_8('A','B','C','D','A','B','C','D');
 		sprintf(str,"Pyro:%d,%d Door:%d Btn:%d Exi:%d(raw:%d)\r\n",pyro1,pyro2,door,button,existence,a);
@@ -159,7 +152,7 @@ static inline void UART_Init(void){
 	// no interrupt
 	// asynchronous, no parity, stop-bit = 1bit, data-bit = 8bit
 	UCSR0A = 0b00000000;
-	UCSR0B = _BV(RXCIE0) | _BV(UDRE0) | _BV(RXEN0) | _BV(TXEN0);
+	UCSR0B = _BV(RXCIE0) | _BV(RXEN0) | _BV(TXEN0);
 	UCSR0C = _BV(UCSZ01) | _BV(UCSZ00);
 }
 
@@ -188,4 +181,24 @@ static inline void PCINT_Init(void){
 void Beep_Play(uint8_t freq){
 	TCCR0A = 0b01000010; // Fast PWM, OC:Toggle, TOP=OCR2A
 	OCR0A = freq;//28で1000Hzくらいのはず..?
+}
+
+void Beep_Stop(void){
+	TCCR0A = 0x00;
+	OCR0A = 0;
+}
+
+void SplashScreen(void){
+	SPLC792_Cmd(0x03);
+	SPLC792_puts("koken IoT System");
+	SPLC792_Cmd(0xC0);
+	SPLC792_puts("   ver 0.1 alpha");
+	Beep_Play(11);
+	_delay_ms(100);
+	Beep_Play(22);
+	_delay_ms(100);
+	Beep_Stop();
+	_delay_ms(800);
+	SPLC792_Cmd(0x01); // clear display (take 2ms)
+	_delay_ms(2);
 }

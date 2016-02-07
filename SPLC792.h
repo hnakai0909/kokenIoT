@@ -26,6 +26,5 @@ void SPLC792_Move(uint8_t pos);
 void SPLC792_puts(const char *s);
 void SPLC792_puts_8(char c0,char c1,char c2,char c3,char c4,char c5,char c6,char c7);
 
-void SplashScreen(void);
 
 #endif /* SPLC792_H_ */
