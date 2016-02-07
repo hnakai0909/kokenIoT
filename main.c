@@ -56,7 +56,7 @@ ISR(PCINT2_vect){
 		button = 0;
 	}
 	if(button!=0){
-		Beep_Play(30);
+		Beep_Play(142);
 		SPLC792_Data('*');
 	}
 }
@@ -74,7 +74,7 @@ ISR(TIMER1_COMPA_vect){
 
 int main(void)
 {
-	uint8_t a;
+	uint8_t a,i;
 	char str[64];
 	_delay_ms(40); // Wait for VDD stable
 	Init();
@@ -91,27 +91,12 @@ int main(void)
 			existence = FALSE;
 		}
 	
-		UART_putchar('\r');UART_putchar('\n');
-		//SPLC792_puts_8('P', '0'+pyro1, '0'+pyro2, 'D', '0'+door, 'E', '0'+existence, ' ');
-		//SPLC792_puts_8('A','B','C','D','A','B','C','D');
-		sprintf(str,"Pyro:%d,%d Door:%d Btn:%d Exi:%d(raw:%d)\r\n",pyro1,pyro2,door,button,existence,a);
-		UART_puts(str);
-		_delay_ms(35);
+		//pyro1,pyro2,door,button,existence,a
+		
 		
 		BME280_ReadData();
-		sprintf(str,"Raw: t=%lu p=%lu h=%lu ",temp_raw,pres_raw,hum_raw);
-		UART_puts(str);
-		//SPLC792_Cmd(0x03);SPLC792_puts(str);
-		_delay_ms(35);
-		temp_cal = calibration_T(temp_raw);
-		press_cal = calibration_P(pres_raw);
-		hum_cal = calibration_H(hum_raw);
-		temp_act = (double)temp_cal / 100.0;
-		press_act = (double)press_cal / 100.0;
-		hum_act = (double)hum_cal / 1024.0;
+		//temp_raw,pres_raw,hum_raw;
 		
-		sprintf(str,"Act: t=%.2f p=%.2f h=%.2f ",temp_act,press_act,hum_act);
-		UART_puts(str);
 		
 		_delay_ms(100);
 		
@@ -168,7 +153,7 @@ static inline void Timer_Init(void){
 }
 
 static inline void PWM_Init(void){
-	TCCR0B = 0b00001100; // Prescaler: 1/256,
+	TCCR0B = 0b00001011; // Prescaler: 1/64,
 	OCR0A = 127;
 }
 
@@ -193,9 +178,9 @@ void SplashScreen(void){
 	SPLC792_puts("koken IoT System");
 	SPLC792_Cmd(0xC0);
 	SPLC792_puts("   ver 0.1 alpha");
-	Beep_Play(11);
+	//Beep_Play(44);
 	_delay_ms(100);
-	Beep_Play(22);
+	//Beep_Play(88);
 	_delay_ms(100);
 	Beep_Stop();
 	_delay_ms(800);
