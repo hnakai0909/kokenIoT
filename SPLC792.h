@@ -9,6 +9,12 @@
 #ifndef SPLC792_H_
 #define SPLC792_H_
 
+#define SPLC792_SETFUNC 0x38
+#define SPLC792_SETEXFUNC 0x39
+#define SPLC792_DISP_ON 0x0c
+#define SPLC792_DISP_CLR 0x01
+
+
 #include "config.h"
 
 #include <avr/io.h>

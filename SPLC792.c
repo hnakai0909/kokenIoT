@@ -13,16 +13,16 @@ void SPLC792_Init(void){
 	_delay_ms(1);
 	PORTD |= _BV(PORTD7);//reset high
 	_delay_ms(50);
-	SPLC792_Cmd(0x38); // function set
-	SPLC792_Cmd(0x39); // extension function set
+	SPLC792_Cmd(SPLC792_SETFUNC); // function set
+	SPLC792_Cmd(SPLC792_SETEXFUNC); // extension function set
 	SPLC792_Cmd(0x14); // internal oscillator
 	SPLC792_Cmd(0x70 | (SPLC792_CONTRAST & 15)); // contrast low
 	SPLC792_Cmd(0x5c | (SPLC792_CONTRAST >> 4 & 3)); // contrast high / icon / power
 	SPLC792_Cmd(0x6c); // follower control
 	_delay_ms(200); // Wait for LCD's VCC stable
-	SPLC792_Cmd(0x38); // function set
-	SPLC792_Cmd(0x0c); // display on
-	SPLC792_Cmd(0x01); // clear display (take 2ms)
+	SPLC792_Cmd(SPLC792_SETFUNC); // function set
+	SPLC792_Cmd(SPLC792_DISP_ON); // display on
+	SPLC792_Cmd(SPLC792_DISP_CLR); // clear display (take 2ms)
 	_delay_ms(2);
 	
 }
