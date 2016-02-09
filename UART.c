@@ -12,9 +12,13 @@ ISR(USART_RX_vect){
 	udr = UDR0;
 	switch(udr){
 		case '?':
-		
+			//pyro1,pyro2,door,button,existence(,a)
+			UART_putchar('0'+pyro1);UART_putchar(',');
+			UART_putchar('0'+pyro2);UART_putchar(',');
+			UART_putchar('0'+door);UART_putchar(',');
+			UART_putchar('0'+existence);UART_putchar(13);UART_putchar(10);
 		break;
-		case 'B':
+		case 'D':
 		break;
 		default:
 		break;

@@ -8,9 +8,9 @@
 #include "main.h"
 
 unsigned char pinc,pind;
-unsigned char existence; // 在室?(蛍光灯 点or滅)
-unsigned char door; // ドア開?
 unsigned char pyro1, pyro2; // ドア前焦電センサ反応?
+unsigned char door; // ドア開?
+unsigned char existence; // 在室?(蛍光灯 点or滅)
 unsigned char button; // 0無押下,1選択,2決定,3取消 (同時押しは知らない)
 uint32_t pres_raw,temp_raw;
 uint32_t hum_raw;
@@ -56,7 +56,7 @@ ISR(PCINT2_vect){
 		button = 0;
 	}
 	if(button!=0){
-		Beep_Play(142);
+		Beep_Play(142);// 440.1 hz
 		SPLC792_Data('*');
 	}
 }
@@ -84,19 +84,22 @@ int main(void)
 		
 		ADCSRA |= _BV(ADSC);       // 変換開始
 		loop_until_bit_is_set(ADCSRA, ADIF);  // 変換終了時ADIFがセットされる
-		a = ( ADC >> 4 );       // AD変換結果 4bitｼﾌﾄ= 6bit:0-64
-		if(a < 32){
+		a = ( ADC >> 3 );       // AD変換結果10bit 3bitｼﾌﾄ= 7bit:0-127
+		if(a < 12){
 			existence = TRUE;
 		} else {
 			existence = FALSE;
 		}
 	
 		//pyro1,pyro2,door,button,existence,a
-		
+		SPLC792_Cmd(0x03);
+		SPLC792_Data('0'+pyro1);SPLC792_Data(',');
+		SPLC792_Data('0'+pyro2);SPLC792_Data(',');
+		SPLC792_Data('0'+door);SPLC792_Data(',');
+		SPLC792_Data('0'+existence);
 		
 		BME280_ReadData();
 		//temp_raw,pres_raw,hum_raw;
-		
 		
 		_delay_ms(100);
 		

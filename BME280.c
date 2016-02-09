@@ -69,7 +69,7 @@ void BME280_ReadRegister(uint8_t regaddr, uint8_t* data, uint8_t num){
 }
 
 void BME280_ReadData(void){
-	uint8_t data[8],i;
+	uint8_t data[8];
 	BME280_ReadRegister(0xF7, data, 8); // read raw pres,temp,hum
 	pres_raw = (data[0] << 12) | (data[1] << 4) | (data[2] >> 4);
 	temp_raw = (data[3] << 12) | (data[4] << 4) | (data[5] >> 4);
