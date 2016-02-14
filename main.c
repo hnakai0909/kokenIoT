@@ -96,7 +96,9 @@ int main(void)
 		SPLC792_Data('0'+pyro1);SPLC792_Data(',');
 		SPLC792_Data('0'+pyro2);SPLC792_Data(',');
 		SPLC792_Data('0'+door);SPLC792_Data(',');
-		SPLC792_Data('0'+existence);
+		SPLC792_Data('0'+existence);SPLC792_Data(',');
+		
+		SPLC792_puts(itoa_03d(str,a));
 		
 		BME280_ReadData();
 		//temp_raw,pres_raw,hum_raw;
@@ -145,8 +147,8 @@ static inline void UART_Init(void){
 }
 
 static inline void ADC_Init(void){
-	ADCSRA = 0b10000100; // AD許可:1 AD開始:0 AD自動起動:0 AD割込:0 AD完了割込:0 ck/16
-	ADMUX = 0b01000010; //AREF=VCC (AREFピンにはコンデンサをつけなければならない), 入力:ADC2(PC2)	
+	ADCSRA = 0b10000110; // AD許可:1 AD開始:0 AD自動起動:0 AD割込:0 AD完了割込:0 ck/64
+	ADMUX = 0b11000010; //AREF=2.56V? (AREFピンにはコンデンサをつけなければならない?), 入力:ADC2(PC2)	
 }
 
 static inline void Timer_Init(void){
