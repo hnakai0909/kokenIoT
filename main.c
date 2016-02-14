@@ -12,9 +12,10 @@ unsigned char pyro1, pyro2; // ドア前焦電センサ反応?
 unsigned char door; // ドア開?
 unsigned char existence; // 在室?(蛍光灯 点or滅)
 unsigned char button; // 0無押下,1選択,2決定,3取消 (同時押しは知らない)
+uint8_t adc_val;
+
 uint32_t pres_raw,temp_raw;
 uint32_t hum_raw;
-
 double temp_act = 0.0, press_act = 0.0,hum_act=0.0;
 int32_t temp_cal;
 uint32_t press_cal,hum_cal;
@@ -72,36 +73,38 @@ ISR(TIMER1_COMPA_vect){
 	bflag=0;
 }
 
+ISR(ADC_vect){
+	adc_val = ( ADC >> 3 );       // AD変換結果10bit 3bitｼﾌﾄ= 7bit:0-127 (ここで割り込みが起きてはいけない)
+	if(adc_val < 12){
+		existence = TRUE;
+	} else {
+		existence = FALSE;
+	}	
+}
+
 int main(void)
 {
-	uint8_t a,i;
+	uint8_t i=0;
 	char str[64];
 	_delay_ms(40); // Wait for VDD stable
 	Init();
 	SplashScreen();
     while (1) 
     {
-		
-		ADCSRA |= _BV(ADSC);       // 変換開始
-		loop_until_bit_is_set(ADCSRA, ADIF);  // 変換終了時ADIFがセットされる
-		a = ( ADC >> 3 );       // AD変換結果10bit 3bitｼﾌﾄ= 7bit:0-127
-		if(a < 12){
-			existence = TRUE;
-		} else {
-			existence = FALSE;
-		}
-	
-		//pyro1,pyro2,door,button,existence,a
+		// pyro1,pyro2,door,button,existence,adc_val
 		SPLC792_Cmd(0x03);
 		SPLC792_Data('0'+pyro1);SPLC792_Data(',');
 		SPLC792_Data('0'+pyro2);SPLC792_Data(',');
 		SPLC792_Data('0'+door);SPLC792_Data(',');
 		SPLC792_Data('0'+existence);SPLC792_Data(',');
 		
-		SPLC792_puts(itoa_03d(str,a));
-		
+		SPLC792_puts(itoa_03d(str,adc_val));SPLC792_Data(',');
+		SPLC792_Data('0'+i); // 生死確認用
 		BME280_ReadData();
-		//temp_raw,pres_raw,hum_raw;
+		// temp_raw,pres_raw,hum_raw;
+		
+		i++;
+		if(i>=10){i=0;}
 		
 		_delay_ms(100);
 		
@@ -147,7 +150,7 @@ static inline void UART_Init(void){
 }
 
 static inline void ADC_Init(void){
-	ADCSRA = 0b10000110; // AD許可:1 AD開始:0 AD自動起動:0 AD割込:0 AD完了割込:0 ck/64
+	ADCSRA = 0b11101110; // AD許可:1 AD開始:1 AD自動起動:1 AD割込:0 AD完了割込:1 ck/64
 	ADMUX = 0b11000010; //AREF=2.56V? (AREFピンにはコンデンサをつけなければならない?), 入力:ADC2(PC2)	
 }
 

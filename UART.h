@@ -19,8 +19,10 @@
 #include <avr/interrupt.h>
 #include <avr/sfr_defs.h>
 #include <util/delay.h>
+#include "myutil.h"
 
 extern unsigned char pyro1,pyro2,door,existence;
+extern uint8_t adc_val;
 
 extern uint16_t dig_T1;
 extern int16_t dig_T2;

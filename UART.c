@@ -8,7 +8,7 @@
 #include "UART.h"
 
 ISR(USART_RX_vect){
-	char udr;
+	char udr,str[5];
 	udr = UDR0;
 	switch(udr){
 		case '?':
@@ -16,7 +16,8 @@ ISR(USART_RX_vect){
 			UART_putchar('0'+pyro1);UART_putchar(',');
 			UART_putchar('0'+pyro2);UART_putchar(',');
 			UART_putchar('0'+door);UART_putchar(',');
-			UART_putchar('0'+existence);UART_putchar(13);UART_putchar(10);
+			UART_putchar('0'+existence);UART_putchar(',');
+			UART_puts(itoa_03d(str,adc_val));UART_putchar(13);UART_putchar(10);
 		break;
 		case 'D':
 		break;
