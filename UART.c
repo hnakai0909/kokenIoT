@@ -21,18 +21,22 @@ ISR(USART_RX_vect){
 			break;
 		//raw
 		case 'p':
+			UART_putchar(itoa_01x((pres_raw>>16)&0x0F));
 			UART_putchar(itoa_01x((pres_raw>>12)&0x0F));
 			UART_putchar(itoa_01x((pres_raw>> 8)&0x0F));
 			UART_putchar(itoa_01x((pres_raw>> 4)&0x0F));
 			UART_putchar(itoa_01x((pres_raw    )&0x0F));
 			break;
 		case 't':
+			UART_putchar(itoa_01x((temp_raw>>16)&0x0F));
 			UART_putchar(itoa_01x((temp_raw>>12)&0x0F));
 			UART_putchar(itoa_01x((temp_raw>> 8)&0x0F));
 			UART_putchar(itoa_01x((temp_raw>> 4)&0x0F));
 			UART_putchar(itoa_01x((temp_raw    )&0x0F));
 			break;
 		case 'h':
+			UART_putchar(itoa_01x((hum_raw>>12)&0x0F));
+			UART_putchar(itoa_01x((hum_raw>> 8)&0x0F));
 			UART_putchar(itoa_01x((hum_raw>> 4)&0x0F));
 			UART_putchar(itoa_01x((hum_raw    )&0x0F));
 			break;
