@@ -24,6 +24,7 @@
 extern unsigned char pyro1,pyro2,door,existence;
 extern uint8_t adc_val;
 
+extern uint32_t pres_raw,temp_raw,hum_raw;
 extern uint16_t dig_T1;
 extern int16_t dig_T2;
 extern int16_t dig_T3;
