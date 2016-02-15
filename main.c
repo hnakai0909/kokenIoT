@@ -14,13 +14,15 @@ unsigned char existence; // 在室?(蛍光灯 点or滅)
 unsigned char button; // 0無押下,1選択,2決定,3取消 (同時押しは知らない)
 uint8_t adc_val;
 
-uint32_t pres_raw,temp_raw;
-uint32_t hum_raw;
+uint32_t pres_raw,temp_raw,hum_raw;
 double temp_act = 0.0, press_act = 0.0,hum_act=0.0;
 int32_t temp_cal;
 uint32_t press_cal,hum_cal;
 
 uint8_t bflag = 0;
+uint8_t bmode = 0;
+//F+D>A<DEA2>A<EF+E>A<D2: familymart
+uint8_t bdata[16] = {85,106,142,106,95,71,71,142,95,85,95,142,106,106,106,0};
 
 char UART_TXbuf[UART_TXBUF_SIZE];
 uint8_t UART_TXbuf_head = 0;
@@ -102,11 +104,25 @@ int main(void)
 		SPLC792_Data('0'+i); // 生死確認用
 		BME280_ReadData();
 		// temp_raw,pres_raw,hum_raw;
+		if(bmode == 0 && door == 1){
+			bmode=1;
+		}
+		if(bmode > 0){
+			Beep_Play(bdata[bmode-1]);
+			bmode++;
+		}
+		if(bmode >= 16 && bmode!=127){
+			Beep_Stop();
+			bmode = 127;
+		}
+		if(bmode == 127 && door == 0){
+			bmode = 0;
+		}
 		
 		i++;
 		if(i>=10){i=0;}
 		
-		_delay_ms(100);
+		_delay_ms(300);
 		
     }
 }
@@ -151,7 +167,7 @@ static inline void UART_Init(void){
 
 static inline void ADC_Init(void){
 	ADCSRA = 0b11101110; // AD許可:1 AD開始:1 AD自動起動:1 AD割込:0 AD完了割込:1 ck/64
-	ADMUX = 0b11000010; //AREF=2.56V? (AREFピンにはコンデンサをつけなければならない?), 入力:ADC2(PC2)	
+	ADMUX = 0b01000010; //AREF=AVCC, 入力:ADC2(PC2)	
 }
 
 static inline void Timer_Init(void){
@@ -185,10 +201,10 @@ void SplashScreen(void){
 	SPLC792_Cmd(0x03);
 	SPLC792_puts("koken IoT System");
 	SPLC792_Cmd(0xC0);
-	SPLC792_puts("   ver 0.1 alpha");
-	//Beep_Play(44);
+	SPLC792_puts("  ver 0.02 alpha");
+	Beep_Play(46);
 	_delay_ms(100);
-	//Beep_Play(88);
+	Beep_Play(92);
 	_delay_ms(100);
 	Beep_Stop();
 	_delay_ms(800);
