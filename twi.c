@@ -44,12 +44,12 @@ uint8_t I2C_Recv(int ack){
 	return TWDR;
 }
 
-void I2C_Recv_Num(uint8_t i2caddr, uint8_t* data, uint8_t num){
-	unsigned char i;
+void I2C_Recv_Num(uint8_t i2caddr, uint8_t* data, uint8_t num, uint8_t offset){
+	uint8_t i;
 	I2C_Start();
 	I2C_Send((i2caddr << 1) | 1); //Read
 	for(i = 0 ; i < num ; i++){
-		data[i] = I2C_Recv(I2C_ACK);
+		data[offset + i] = I2C_Recv(I2C_ACK);
 		_delay_us(27);
 	}
 	I2C_Recv(I2C_NOACK);

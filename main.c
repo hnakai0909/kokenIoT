@@ -14,11 +14,6 @@ unsigned char existence; // 在室?(蛍光灯 点or滅)
 unsigned char button; // 0無押下,1選択,2決定,3取消 (同時押しは知らない)
 uint8_t adc_val;
 
-uint32_t pres_raw,temp_raw,hum_raw;
-double temp_act = 0.0, press_act = 0.0,hum_act=0.0;
-int32_t temp_cal;
-uint32_t press_cal,hum_cal;
-
 uint8_t bflag = 0;
 uint8_t bmode = 0;
 //F+D>A<DEA2>A<EF+E>A<D2: familymart
@@ -103,7 +98,6 @@ int main(void)
 		SPLC792_puts(itoa_03d(str,adc_val));SPLC792_Data(',');
 		SPLC792_Data('0'+i); // 生死確認用
 		BME280_ReadData();
-		// temp_raw,pres_raw,hum_raw;
 		if(bmode == 0 && door == 1){
 			bmode=1;
 		}
@@ -167,7 +161,7 @@ static inline void UART_Init(void){
 
 static inline void ADC_Init(void){
 	ADCSRA = 0b11101110; // AD許可:1 AD開始:1 AD自動起動:1 AD割込:0 AD完了割込:1 ck/64
-	ADMUX = 0b01000010; //AREF=AVCC, 入力:ADC2(PC2)	
+	ADMUX = 0b11000010; //AREF=1.1V, 入力:ADC2(PC2)	
 }
 
 static inline void Timer_Init(void){

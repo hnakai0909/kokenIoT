@@ -28,14 +28,9 @@ extern uint32_t pres_raw,temp_raw,hum_raw;
 
 int BME280_Init(void);
 
-void BME280_WriteRegister(uint8_t regaddr,uint8_t data);
-void BME280_ReadRegister(uint8_t regaddr,uint8_t* data,uint8_t num);
+void BME280_WriteRegister(uint8_t regaddr, uint8_t data);
+void BME280_ReadRegister(uint8_t regaddr, uint8_t* data, uint8_t num, uint8_t offset);
 
 void BME280_ReadData(void);
-
-
-int32_t calibration_T(uint32_t adc_T);
-uint32_t calibration_P(uint32_t adc_P);
-uint32_t calibration_H(uint32_t adc_H);
 
 #endif /* BME280_H_ */
