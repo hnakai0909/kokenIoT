@@ -9,15 +9,19 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <avr/sfr_defs.h>
+#include <avr/wdt.h>
 #include <util/delay.h>
 #include <stdio.h>
 #include <math.h>
+#include <stdint.h>
 
 #include "twi.h"
 #include "UART.h"
 #include "BME280.h"
 #include "SPLC792.h"
 #include "myutil.h"
+
+void get_mcusr(void) __attribute__((naked)) __attribute__((section(".init3")));
 
 static inline void Init(void);
 

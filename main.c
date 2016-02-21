@@ -7,6 +7,8 @@
 
 #include "main.h"
 
+uint8_t mcusr_mirror __attribute__ ((section (".noinit")));
+
 unsigned char pinc,pind;
 unsigned char pyro1, pyro2; // ドア前焦電センサ反応?
 unsigned char door; // ドア開?
@@ -83,6 +85,7 @@ int main(void)
 {
 	uint8_t i=0;
 	char str[64];
+	get_mcusr();
 	_delay_ms(40); // Wait for VDD stable
 	Init();
 	SplashScreen();
@@ -97,7 +100,9 @@ int main(void)
 		
 		SPLC792_puts(itoa_03d(str,adc_val));SPLC792_Data(',');
 		SPLC792_Data('0'+i); // 生死確認用
+		wdt_enable(WDTO_4S);
 		BME280_ReadData();
+		wdt_disable();
 		if(bmode == 0 && door == 1){
 			bmode=1;
 		}
@@ -119,6 +124,12 @@ int main(void)
 		_delay_ms(300);
 		
     }
+}
+
+void get_mcusr(void){
+	//mcusr_mirror = MCUSR;
+	MCUSR = 0;
+	wdt_disable();
 }
 
 static inline void Init(void){

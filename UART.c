@@ -34,6 +34,14 @@ ISR(USART_RX_vect){
 				UART_putchar(itoa_01x((data_dig[i]    )&0x0F));
 			}
 			break;
+		// FORCE RESET
+		case 'Q':
+			cli();
+			wdt_enable(WDTO_15MS);
+			while(1){
+				_delay_ms(20);
+			}
+			break;
 		default:
 			break;
 	}
